@@ -1,0 +1,126 @@
+.GapPage {
+    padding: 1rem;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #f9f9f9;
+    min-height: 100vh;
+  }
+  
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  
+  .tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .tabs button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #007bff;
+    background-color: white;
+    color: #007bff;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .tabs button.active,
+  .tabs button:hover {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .table-wrapper {
+    overflow-x: auto;
+    max-height: calc(100vh - 220px);
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  table {
+    border-collapse: collapse;
+    min-width: 2000px;
+    width: 100%;
+  }
+  
+  th {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    white-space: nowrap;
+    text-align: left;
+  }
+  
+  td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap;
+    font-size: 0.9rem;
+  }
+  
+  tr:nth-child(even) td {
+    background-color: #f3f3f3;
+  }
+  
+  .main-nav {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    background-color: #e0e0e0;
+    padding: 0.8rem;
+  }
+  
+  .main-nav a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .main-nav a:hover {
+    text-decoration: underline;
+  }
+  
+
+  .table-wrapper {
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: calc(100vh - 220px);
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  table {
+    border-collapse: collapse;
+    width: max-content;
+    min-width: 2200px; /* מותאם לריבוי עמודות */
+  }
+  
+  th {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    white-space: nowrap;
+    text-align: left;
+    z-index: 1;
+  }
+  
+  td {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+    white-space: nowrap;
+    font-size: 0.9rem;
+  }
+  
+  tr:nth-child(even) td {
+    background-color: #f3f3f3;
+  }
+  

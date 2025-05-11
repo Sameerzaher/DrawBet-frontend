@@ -1,0 +1,90 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #f5f7fa;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.selectors {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.tabs button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #007bff;
+  background-color: white;
+  color: #007bff;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tabs button.active,
+.tabs button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.table-wrapper {
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: auto;
+  background-color: white;
+  border-radius: 6px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+  max-height: calc(100vh - 230px);
+}
+
+table {
+  border-collapse: collapse;
+  min-width: 2200px;
+  width: 100%;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+td {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+tr:nth-child(even) td {
+  background-color: #f9f9f9;
+}
