@@ -10,7 +10,10 @@ export default function GapPage({ gapType }) {
   const [relegatedTeams, setRelegatedTeams] = useState([]);
 
   const bigTeams = ["Barcelona", "Real Madrid", "Atletico Madrid"];
-  const BASE_URL = "https://drawbet-backend.onrender.com" || "http://localhost:3001";
+  const BASE_URL =
+    process.env.NODE_ENV === "production"
+      ? "https://drawbet-backend.onrender.com"
+      : "http://localhost:3001";
 
   useEffect(() => {
     const endpoint = gapType.toLowerCase() === "flexible11" ? "flexible11" : gapType.toLowerCase();
@@ -77,7 +80,7 @@ export default function GapPage({ gapType }) {
         setRelegatedTeams(Array.from(relegatedSet));
       })
       .catch(err => console.error("❌ Server error (promorelegated):", err));
-  }, [gapType, BASE_URL]);
+  }, [gapType]);
 
   const yearOptions = [
     "All",
