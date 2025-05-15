@@ -10,7 +10,7 @@ export default function GapPage({ gapType }) {
   const [relegatedTeams, setRelegatedTeams] = useState([]);
 
   const bigTeams = ["Barcelona", "Real Madrid", "Atletico Madrid"];
-  const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3001";
+  const BASE_URL = "https://drawbet-backend.onrender.com" || "http://localhost:3001";
 
   useEffect(() => {
     const endpoint = gapType.toLowerCase() === "flexible11" ? "flexible11" : gapType.toLowerCase();
