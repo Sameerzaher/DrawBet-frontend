@@ -1,4 +1,3 @@
-// src/components/FlexibleStreaksPage/FlexibleStreaksPage.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./FlexibleStreaksPage.css";
@@ -10,7 +9,7 @@ export default function FlexibleStreaksPage() {
   const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3001";
 
   useEffect(() => {
-    axios.get(`${BASE_URL}/api/flexible`)
+    axios.get(`${BASE_URL}/api/flexible11`) // ← מתייחס לכל השנים עם הטאב Flexible_CleanStreaks_11_Unique_{{season}}
       .then(res => {
         const merged = res.data.flatMap(entry => {
           return entry.rows.map(row => {
@@ -23,24 +22,19 @@ export default function FlexibleStreaksPage() {
 
         const first = res.data.find(d => d.rows.length > 0);
         if (first && Array.isArray(first.rows[0])) {
-          const headers = ["Season", ...first.rows[0]];
-          setHeaders(headers);
+          setHeaders(["Season", ...first.rows[0]]);
         } else if (first && typeof first.rows[0] === "object") {
-          const headers = ["Season", ...Object.keys(first.rows[0])];
-          setHeaders(headers);
+          setHeaders(["Season", ...Object.keys(first.rows[0])]);
         }
 
         setData(merged);
       })
-      .catch(err => console.error("❌ Server error (flexible):", err));
+      .catch(err => console.error("❌ Server error (flexible11):", err));
   }, [BASE_URL]);
 
   const yearOptions = [
     "All",
-    ...[...new Set(data.map(r => r[0]))]
-      .filter(Boolean)
-      .sort()
-      .reverse()
+    ...[...new Set(data.map(r => r[0]))].filter(Boolean).sort().reverse()
   ];
 
   const filtered = data.filter(row =>

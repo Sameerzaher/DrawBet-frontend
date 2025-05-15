@@ -13,34 +13,39 @@ export default function GapPage({ gapType }) {
   const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:3001";
 
   useEffect(() => {
-    async function loadData() {
-      try {
-        const res = await axios.get(`${BASE_URL}/api/${gapType.toLowerCase()}`);
-        const entries = res.data;
+    const endpoint = gapType.toLowerCase() === "flexible11" ? "flexible11" : gapType.toLowerCase();
+    axios.get(`${BASE_URL}/api/${endpoint}`)
+      .then(res => {
+        if (!Array.isArray(res.data)) {
+          console.error("❌ Invalid response:", res.data);
+          return;
+        }
 
         let merged = [];
         let headersDetected = null;
 
-        for (const entry of entries) {
+        for (const entry of res.data) {
           const { season, rows } = entry;
           if (!Array.isArray(rows) || rows.length === 0) continue;
 
-          if (Array.isArray(rows[0])) {
-            const keys = rows[0];
-            if (!headersDetected) headersDetected = ["Season", ...keys];
-            for (let i = 1; i < rows.length; i++) {
-              const row = rows[i];
-              if (Array.isArray(row)) {
-                merged.push([season, ...row]);
-              }
-            }
-          } else if (typeof rows[0] === "object" && rows[0] !== null) {
+          if (typeof rows[0] === "object" && !Array.isArray(rows[0])) {
             const keys = Object.keys(rows[0]);
             if (!headersDetected) headersDetected = ["Season", ...keys];
-            for (const row of rows) {
-              const values = keys.map(k => row[k]);
-              merged.push([season, ...values]);
-            }
+
+            rows.forEach(obj => {
+              const row = [season, ...keys.map(k => obj[k])];
+              merged.push(row);
+            });
+
+          } else if (Array.isArray(rows[0])) {
+            const keys = rows[0];
+            if (!headersDetected) headersDetected = ["Season", ...keys];
+
+            rows.slice(1).forEach(arr => {
+              if (Array.isArray(arr)) {
+                merged.push([season, ...arr]);
+              }
+            });
           }
         }
 
@@ -48,14 +53,13 @@ export default function GapPage({ gapType }) {
           setHeaders(headersDetected);
           setData(merged);
         } else {
-          console.warn("⚠️ No valid rows in gap data", entries);
+          console.warn("⚠️ No valid rows in response", res.data);
         }
-      } catch (err) {
-        console.error("❌ Server error (gap data):", err);
-      }
+      })
+      .catch(err => console.error("❌ Server error:", err));
 
-      try {
-        const res = await axios.get(`${BASE_URL}/api/promorelegated`);
+    axios.get(`${BASE_URL}/api/promorelegated`)
+      .then(res => {
         const promotedSet = new Set();
         const relegatedSet = new Set();
 
@@ -71,17 +75,16 @@ export default function GapPage({ gapType }) {
 
         setPromotedTeams(Array.from(promotedSet));
         setRelegatedTeams(Array.from(relegatedSet));
-      } catch (err) {
-        console.error("❌ Server error (promorelegated):", err);
-      }
-    }
-
-    loadData();
+      })
+      .catch(err => console.error("❌ Server error (promorelegated):", err));
   }, [gapType, BASE_URL]);
 
   const yearOptions = [
     "All",
-    ...[...new Set(data.map(r => r[0]))].filter(Boolean).sort().reverse()
+    ...[...new Set(data.map(r => r[0]))]
+      .filter(Boolean)
+      .sort()
+      .reverse()
   ];
 
   const cleanTeamName = (team, league) => {
@@ -90,7 +93,7 @@ export default function GapPage({ gapType }) {
   };
 
   const getTeamColor = (teamRaw, league) => {
-    const team = cleanTeamName(teamRaw, league || "");
+    const team = cleanTeamName(teamRaw, league);
     const t = team?.toString().trim();
     if (bigTeams.includes(t)) return "#cfe2f3";
     if (promotedTeams.includes(t)) return "#f4cccc";
@@ -107,7 +110,7 @@ export default function GapPage({ gapType }) {
   };
 
   const filtered = data.filter(row => {
-    const rowYear = row?.[0]?.toString().trim();
+    const rowYear = row[0]?.toString().trim();
     return selectedYear === "All" || rowYear === selectedYear;
   });
 
@@ -125,6 +128,27 @@ export default function GapPage({ gapType }) {
             {year === "All" ? "All Years" : year}
           </button>
         ))}
+
+        <button
+          style={{ marginLeft: "20px", backgroundColor: "#d9534f", color: "white", padding: "5px 10px" }}
+          onClick={async () => {
+            if (window.confirm("רענון מלא של כל העונות 2017–2024 מה־API. אתה בטוח?")) {
+              try {
+                const seasons = [2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024];
+                for (const season of seasons) {
+                  await axios.post(`${BASE_URL}/api/refresh/${season}`);
+                }
+                alert("✅ כל העונות רועננו והוקלטו בקובץ ה־Cache");
+                window.location.reload();
+              } catch (err) {
+                console.error("❌ Refresh all failed:", err);
+                alert("שגיאה בעת רענון כולל");
+              }
+            }
+          }}
+        >
+          רענן הכל
+        </button>
       </div>
 
       <div className="table-wrapper">
@@ -137,20 +161,19 @@ export default function GapPage({ gapType }) {
                 {headers.map((h, i) => {
                   let display = h;
                   if (h.includes("מספר עם פער"))
-                    display = gapType === "Gap10" ? "מספר עם פער 10+" : "מספר עם פער 8+";
+                    display = gapType === "Gap10" ? "מספר עם פער 10+" : gapType === "Gap8" ? "מספר עם פער 8+" : h;
                   return <th key={i}>{display}</th>;
                 })}
               </tr>
             </thead>
             <tbody>
               {filtered.map((row, i) => {
-                if (!Array.isArray(row)) return null;
-                const endMDIndex = headers.findIndex(h =>
+                const endMDIndex = headers?.findIndex?.(h =>
                   h?.toString().trim().toLowerCase() === "end md"
                 );
-                const isEnd = row?.[endMDIndex]?.toString().trim() === "38";
+                const isEnd = endMDIndex !== -1 && row[endMDIndex]?.toString().trim() === "38";
                 const highlightCols = ["start md", "end md", "clean length", "total streak length", "breaker md"];
-                const league = row?.[3] || "";
+                const league = row[3];
 
                 return (
                   <tr key={i}>
