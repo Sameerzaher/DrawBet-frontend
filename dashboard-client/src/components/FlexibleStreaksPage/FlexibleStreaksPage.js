@@ -6,12 +6,13 @@ export default function FlexibleStreaksPage() {
   const [data, setData] = useState([]);
   const [headers, setHeaders] = useState([]);
   const [selectedYear, setSelectedYear] = useState("All");
+
   const BASE_URL = window.location.hostname.includes("localhost")
-  ? "http://localhost:3001"
-  : "https://drawbet-backend.onrender.com";
+    ? "http://localhost:3001"
+    : "https://drawbet-backend.onrender.com";
 
   useEffect(() => {
-    axios.get(`${BASE_URL}/api/flexible11`) // ← מתייחס לכל השנים עם הטאב Flexible_CleanStreaks_11_Unique_{{season}}
+    axios.get(`${BASE_URL}/api/flexible11`)
       .then(res => {
         const merged = res.data.flatMap(entry => {
           return entry.rows.map(row => {
@@ -32,7 +33,7 @@ export default function FlexibleStreaksPage() {
         setData(merged);
       })
       .catch(err => console.error("❌ Server error (flexible11):", err));
-  }, [BASE_URL]);
+  }, []);
 
   const yearOptions = [
     "All",
