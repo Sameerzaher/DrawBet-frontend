@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-ro
 import GapPage from "./components/GapPage/GapPage";
 import "./App.css";
 import FlexibleStreaksPage from "./components/FlexibleStreaksPage/FlexibleStreaksPage";
-
+import PromoRelegPage from "./components/PromoRelegPage/PromoRelegPage";
 
 
 function App() {
@@ -15,7 +15,7 @@ function App() {
           <Link to="/gap8">Gap 8</Link>
           <Link to="/gap10">Gap 10</Link>
           <Link to="/flexible11">Flexible 11</Link>
-
+          <Link to="/promoreleg">Promoted & Relegated</Link>
         </nav>
 
         <Routes>
@@ -23,6 +23,7 @@ function App() {
           <Route path="/gap8" element={<GapPage gapType="Gap8" />} />
           <Route path="/gap10" element={<GapPage gapType="Gap10" />} />
           <Route path="/flexible11" element={<FlexibleStreaksPage />} />
+          <Route path="/promoreleg" element={<PromoRelegPage />} />
         </Routes>
       </div>
     </Router>

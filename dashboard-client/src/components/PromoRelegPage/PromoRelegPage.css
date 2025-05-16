@@ -1,0 +1,25 @@
+.PromoRelegPage {
+    padding: 2rem;
+    font-family: sans-serif;
+  }
+  
+  .tabs {
+    margin-bottom: 1rem;
+  }
+  
+  .tabs button {
+    margin: 0 0.5rem;
+    padding: 5px 10px;
+  }
+  
+  .table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .table-wrapper th, .table-wrapper td {
+    padding: 8px;
+    border: 1px solid #ccc;
+    text-align: left;
+  }
+  
