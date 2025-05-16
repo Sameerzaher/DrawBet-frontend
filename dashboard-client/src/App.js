@@ -5,7 +5,7 @@ import GapPage from "./components/GapPage/GapPage";
 import "./App.css";
 import FlexibleStreaksPage from "./components/FlexibleStreaksPage/FlexibleStreaksPage";
 import PromoRelegPage from "./components/PromoRelegPage/PromoRelegPage";
-
+import TeamRanksPage from "./components/TeamRanksPage/TeamRanksPage";
 
 function App() {
   return (
@@ -16,6 +16,7 @@ function App() {
           <Link to="/gap10">Gap 10</Link>
           <Link to="/flexible11">Flexible 11</Link>
           <Link to="/promoreleg">Promoted & Relegated</Link>
+          <Link to="/teamranks">Team Ranks</Link>
         </nav>
 
         <Routes>
@@ -24,6 +25,7 @@ function App() {
           <Route path="/gap10" element={<GapPage gapType="Gap10" />} />
           <Route path="/flexible11" element={<FlexibleStreaksPage />} />
           <Route path="/promoreleg" element={<PromoRelegPage />} />
+          <Route path="/teamranks" element={<TeamRanksPage />} />
         </Routes>
       </div>
     </Router>
