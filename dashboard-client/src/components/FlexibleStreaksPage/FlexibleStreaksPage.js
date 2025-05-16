@@ -6,11 +6,9 @@ export default function FlexibleStreaksPage() {
   const [data, setData] = useState([]);
   const [headers, setHeaders] = useState([]);
   const [selectedYear, setSelectedYear] = useState("All");
-  const BASE_URL =
-  process.env.NODE_ENV === "production"
-    ? "https://drawbet-backend.onrender.com"
-    : "http://localhost:3001";
-
+  const BASE_URL = window.location.hostname.includes("localhost")
+  ? "http://localhost:3001"
+  : "https://drawbet-backend.onrender.com";
 
   useEffect(() => {
     axios.get(`${BASE_URL}/api/flexible11`) // ← מתייחס לכל השנים עם הטאב Flexible_CleanStreaks_11_Unique_{{season}}
