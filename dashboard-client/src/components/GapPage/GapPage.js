@@ -10,13 +10,16 @@ export default function GapPage({ gapType }) {
   const [relegatedTeams, setRelegatedTeams] = useState([]);
 
   const bigTeams = ["Barcelona", "Real Madrid", "Atletico Madrid"];
-  const BASE_URL =
-    process.env.NODE_ENV === "production"
-      ? "https://drawbet-backend.onrender.com"
-      : "http://localhost:3001";
+
+  // ✅ תשתנה אוטומטית לפי סביבת עבודה
+  const BASE_URL = window.location.hostname.includes("localhost")
+    ? "http://localhost:3001"
+    : "https://drawbet-backend.onrender.com";
 
   useEffect(() => {
     const endpoint = gapType.toLowerCase() === "flexible11" ? "flexible11" : gapType.toLowerCase();
+
+    // 📥 טען את נתוני ה־Gap / Flexible11
     axios.get(`${BASE_URL}/api/${endpoint}`)
       .then(res => {
         if (!Array.isArray(res.data)) {
@@ -61,6 +64,7 @@ export default function GapPage({ gapType }) {
       })
       .catch(err => console.error("❌ Server error:", err));
 
+    // 📥 טען קבוצות עולות/יורדות
     axios.get(`${BASE_URL}/api/promorelegated`)
       .then(res => {
         const promotedSet = new Set();
@@ -84,10 +88,7 @@ export default function GapPage({ gapType }) {
 
   const yearOptions = [
     "All",
-    ...[...new Set(data.map(r => r[0]))]
-      .filter(Boolean)
-      .sort()
-      .reverse()
+    ...[...new Set(data.map(r => r[0]))].filter(Boolean).sort().reverse()
   ];
 
   const cleanTeamName = (team, league) => {
@@ -98,9 +99,9 @@ export default function GapPage({ gapType }) {
   const getTeamColor = (teamRaw, league) => {
     const team = cleanTeamName(teamRaw, league);
     const t = team?.toString().trim();
-    if (bigTeams.includes(t)) return "#cfe2f3";
-    if (promotedTeams.includes(t)) return "#f4cccc";
-    if (relegatedTeams.includes(t)) return "#d9ead3";
+    if (bigTeams.includes(t)) return "#cfe2f3";        // כחול לקבוצות חזקות
+    if (promotedTeams.includes(t)) return "#f4cccc";   // ורוד לעולות
+    if (relegatedTeams.includes(t)) return "#d9ead3";  // ירוק ליורדות
     return "";
   };
 
