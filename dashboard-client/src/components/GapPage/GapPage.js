@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import "./GapPage.css";
 
@@ -8,10 +8,10 @@ export default function GapPage({ gapType }) {
   const [selectedYear, setSelectedYear] = useState("All");
   const [promotedTeams, setPromotedTeams] = useState([]);
   const [relegatedTeams, setRelegatedTeams] = useState([]);
+  const [sortConfig, setSortConfig] = useState({ columnIndex: null, direction: "asc" });
 
   const bigTeams = ["Barcelona", "Real Madrid", "Atletico Madrid"];
 
-  // ✅ תשתנה אוטומטית לפי סביבת עבודה
   const BASE_URL = window.location.hostname.includes("localhost")
     ? "http://localhost:3001"
     : "https://drawbet-backend.onrender.com";
@@ -19,7 +19,6 @@ export default function GapPage({ gapType }) {
   useEffect(() => {
     const endpoint = gapType.toLowerCase() === "flexible11" ? "flexible11" : gapType.toLowerCase();
 
-    // 📥 טען את נתוני ה־Gap / Flexible11
     axios.get(`${BASE_URL}/api/${endpoint}`)
       .then(res => {
         if (!Array.isArray(res.data)) {
@@ -64,7 +63,6 @@ export default function GapPage({ gapType }) {
       })
       .catch(err => console.error("❌ Server error:", err));
 
-    // 📥 טען קבוצות עולות/יורדות
     axios.get(`${BASE_URL}/api/promorelegated`)
       .then(res => {
         const promotedSet = new Set();
@@ -99,9 +97,9 @@ export default function GapPage({ gapType }) {
   const getTeamColor = (teamRaw, league) => {
     const team = cleanTeamName(teamRaw, league);
     const t = team?.toString().trim();
-    if (bigTeams.includes(t)) return "#cfe2f3";        // כחול לקבוצות חזקות
-    if (promotedTeams.includes(t)) return "#f4cccc";   // ורוד לעולות
-    if (relegatedTeams.includes(t)) return "#d9ead3";  // ירוק ליורדות
+    if (bigTeams.includes(t)) return "#cfe2f3";
+    if (promotedTeams.includes(t)) return "#f4cccc";
+    if (relegatedTeams.includes(t)) return "#d9ead3";
     return "";
   };
 
@@ -117,6 +115,40 @@ export default function GapPage({ gapType }) {
     const rowYear = row[0]?.toString().trim();
     return selectedYear === "All" || rowYear === selectedYear;
   });
+
+  const sortedData = useMemo(() => {
+    if (sortConfig.columnIndex === null) return filtered;
+
+    const sorted = [...filtered].sort((a, b) => {
+      const valA = a[sortConfig.columnIndex];
+      const valB = b[sortConfig.columnIndex];
+
+      const isNumber = !isNaN(parseFloat(valA)) && !isNaN(parseFloat(valB));
+      if (isNumber) {
+        return sortConfig.direction === "asc"
+          ? parseFloat(valA) - parseFloat(valB)
+          : parseFloat(valB) - parseFloat(valA);
+      }
+
+      return sortConfig.direction === "asc"
+        ? valA?.toString().localeCompare(valB)
+        : valB?.toString().localeCompare(valA);
+    });
+
+    return sorted;
+  }, [filtered, sortConfig]);
+
+  const handleSort = (index) => {
+    setSortConfig((prev) => {
+      if (prev.columnIndex === index) {
+        return {
+          columnIndex: index,
+          direction: prev.direction === "asc" ? "desc" : "asc"
+        };
+      }
+      return { columnIndex: index, direction: "asc" };
+    });
+  };
 
   return (
     <div className="GapPage">
@@ -156,7 +188,7 @@ export default function GapPage({ gapType }) {
       </div>
 
       <div className="table-wrapper">
-        {filtered.length === 0 ? (
+        {sortedData.length === 0 ? (
           <p>No data to display</p>
         ) : (
           <table>
@@ -166,12 +198,20 @@ export default function GapPage({ gapType }) {
                   let display = h;
                   if (h.includes("מספר עם פער"))
                     display = gapType === "Gap10" ? "מספר עם פער 10+" : gapType === "Gap8" ? "מספר עם פער 8+" : h;
-                  return <th key={i}>{display}</th>;
+
+                  const isSorted = sortConfig.columnIndex === i;
+                  const arrow = isSorted ? (sortConfig.direction === "asc" ? " 🔼" : " 🔽") : "";
+
+                  return (
+                    <th key={i} onClick={() => handleSort(i)} style={{ cursor: "pointer" }}>
+                      {display}{arrow}
+                    </th>
+                  );
                 })}
               </tr>
             </thead>
             <tbody>
-              {filtered.map((row, i) => {
+              {sortedData.map((row, i) => {
                 const endMDIndex = headers?.findIndex?.(h =>
                   h?.toString().trim().toLowerCase() === "end md"
                 );
