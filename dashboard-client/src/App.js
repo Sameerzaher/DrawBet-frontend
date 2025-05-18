@@ -1,34 +1,32 @@
-// src/App.js
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from "react-router-dom";
-import GapPage from "./components/GapPage/GapPage";
-import "./App.css";
+import { Routes, Route } from "react-router-dom";
+import Sidebar from "../src/components/Sidebar/Sidebar";
+import GapPage from "../src/components/GapPage/GapPage";
+import TeamRanksPage from "../src/components/TeamRanksPage/TeamRanksPage";
+import PromotedPage from "../src/components/PromoRelegPage/PromoRelegPage";
 import FlexibleStreaksPage from "./components/FlexibleStreaksPage/FlexibleStreaksPage";
-import PromoRelegPage from "./components/PromoRelegPage/PromoRelegPage";
-import TeamRanksPage from "./components/TeamRanksPage/TeamRanksPage";
-
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <nav className="main-nav">
-          <Link to="/gap8">Gap 8</Link>
-          <Link to="/gap10">Gap 10</Link>
-          <Link to="/flexible11">Flexible 11</Link>
-          <Link to="/promoreleg">Promoted & Relegated</Link>
-          <Link to="/teamranks">Team Ranks</Link>
-        </nav>
+    <div style={{ display: "flex" }}>
+      <Sidebar />
+      <div style={{ marginLeft: "220px", padding: "20px", flex: 1 }}>
+      <Routes>
+          <Route path="/esp/gap8" element={<GapPage gapType="Gap8" />} />
+          <Route path="/esp/gap8/:year" element={<GapPage gapType="Gap8" />} />
 
-        <Routes>
-          <Route path="/" element={<Navigate to="/gap8" />} />
-          <Route path="/gap8" element={<GapPage gapType="Gap8" />} />
-          <Route path="/gap10" element={<GapPage gapType="Gap10" />} />
-          <Route path="/flexible11" element={<FlexibleStreaksPage />} />
-          <Route path="/promoreleg" element={<PromoRelegPage />} />
-          <Route path="/teamranks" element={<TeamRanksPage />} />
+          <Route path="/esp/gap10" element={<GapPage gapType="Gap10" />} />
+          <Route path="/esp/gap10/:year" element={<GapPage gapType="Gap10" />} />
+
+          <Route path="/esp/flexible11" element={<FlexibleStreaksPage />} />
+          <Route path="/esp/flexible11/:year" element={<FlexibleStreaksPage />} />
+
+          <Route path="/esp/teamranks" element={<TeamRanksPage league="ESP" />} />
+          <Route path="/esp/promoted" element={<PromotedPage league="ESP" />} />
+
+          <Route path="/" element={<GapPage gapType="Gap8" />} />
         </Routes>
       </div>
-    </Router>
+    </div>
   );
 }
 
